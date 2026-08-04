@@ -9,6 +9,7 @@ import cors from "cors";
 import corsOptions from "./config/corsOptions.js";
 import connectDB from "./config/dbConn.js";
 import mongoose from "mongoose";
+import userRoutes from './routes/userRoutes.js';
 
 console.log(process.env.NODE_ENV);
 
@@ -30,6 +31,7 @@ app.use(
 
 // routes
 app.use("/", rootRouter);
+app.use('/users', userRoutes);
 
 app.all("/{*splat}", (req, res) => {
   res.status(404);
