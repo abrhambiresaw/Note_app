@@ -1,14 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 body {
+  font-family: 'Nunito', sans-serif;
   @apply min-h-screen bg-slate-900 text-white;
   font-family: 'Nunito', sans-serif;
-  background-image: url('./img/background.jpg');
+  //background-image: url('./img/background.jpg');
   background-size: cover;
   background-position: top right;
   background-blend-mode: multiply;
+}
+
+#root {
+  @apply min-h-screen flex flex-col;
 }
