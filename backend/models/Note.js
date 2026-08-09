@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
-import AutoIncrementFactory from 'mongoose-sequence'
 
-const AutoIncrement = AutoIncrementFactory(mongoose)
+const counterSchema = new mongoose.Schema({
+  id: { type: String, required: true },
+  seq: { type: Number, default: 0 }
+});
+
+const Counter = mongoose.model('Counter', counterSchema);
 
 const noteSchema = new mongoose.Schema(
   {
@@ -10,30 +14,25 @@ const noteSchema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
-    title: {
-      type: String,
-      required: true,
-    },
-    text: {
-      type: String,
-      required: true,
-    },
-
-    completed: {
-      type: Boolean,
-      default: false,
-    },
+    title: { type: String, required: true },
+    text: { type: String, required: true },
+    completed: { type: Boolean, default: false },
+    ticket: { type: Number }
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true }
 );
 
-noteSchema.plugin(AutoIncrement, {
-  inc_field: 'ticket',
-  id: 'ticketNums',
-  start_seq: 500
-})
+noteSchema.pre('save', async function() {
+  if (this.isNew) {
+    const counter = await Counter.findOneAndUpdate(
+      { id: 'ticketNums' },
+      { $inc: { seq: 1 } },
+      { returnDocument: 'after', upsert: true }
+    );
+    this.ticket = counter.seq + 499;
+  }
+});
 
 const Note = mongoose.model('Note', noteSchema);
+
 export default Note;
