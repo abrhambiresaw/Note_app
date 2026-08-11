@@ -5,7 +5,7 @@ function Public() {
   const content = (
         <section className="flex flex-col gap-4">
             <header>
-                <h1>Welcome to <span className="whitespace-nowrap">Dan D. Repairs!</span></h1>
+                <h1 className="text-2xl font-semibold">Welcome to <span className="whitespace-nowrap">Dan D. Repairs!</span></h1>
             </header>
             <main className="grow border-y-2 border-white py-4">
                 <p>Located in Beautiful Downtown Foo City, Dan D. Repairs  provides a trained staff ready to meet your tech repair needs.</p>
