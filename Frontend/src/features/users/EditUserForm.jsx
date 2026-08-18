@@ -19,12 +19,12 @@ function EditUserForm({ user }) {
 
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState(user.username);
+  const [username, setUsername] = useState(user?.username ?? "");
   const [validUsername, setValidUsername] = useState(false);
   const [password, setPassword] = useState("");
   const [validPassword, setValidPassword] = useState(false);
-  const [roles, setRoles] = useState(user.roles);
-  const [active, setActive] = useState(user.active);
+  const [roles, setRoles] = useState(user?.roles ?? []);
+  const [active, setActive] = useState(user?.active ?? true);
 
   useEffect(() => {
     setValidUsername(USER_REGEX.test(username));
