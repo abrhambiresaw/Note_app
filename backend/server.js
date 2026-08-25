@@ -11,6 +11,7 @@ import connectDB from "./config/dbConn.js";
 import mongoose from "mongoose";
 import userRoutes from './routes/userRoutes.js';
 import noteRoutes from './routes/noteRoutes.js';
+import authRoutes from './routes/authRoutes.js'
 
 console.log(process.env.NODE_ENV);
 
@@ -34,6 +35,7 @@ app.use(
 app.use("/", rootRouter);
 app.use('/users', userRoutes);
 app.use('/notes', noteRoutes);
+app.use('/auth', authRoutes)
 
 app.all("/{*splat}", (req, res) => {
   res.status(404);
