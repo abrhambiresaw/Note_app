@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { setCredentials } from "./authSlice";
 import { useLoginMutation } from "./authApiSlice";
 
+import usePersist from "../../hooks/usePersist";
+
 function Login() {
   const userRef = useRef(null);
   const errRef = useRef(null);
@@ -12,6 +14,7 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
+  const [persist, setPersist] = usePersist()
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -63,6 +66,8 @@ function Login() {
   const handlePwdInput = (e) => {
     setPassword(e.target.value);
   };
+  
+  const handleToggle = () => setPersist(prev => !prev)
 
   const errClass = errMsg
     ? "mb-4 rounded-md bg-red-100 p-3 text-sm text-red-700"
@@ -148,6 +153,17 @@ function Login() {
             >
               Sign In
             </button>
+
+            <label htmlFor="persist" className="flex items-center w-full gap-2">
+              <input 
+                type="checkbox" 
+                className="w-6 h-6"
+                id="persist"
+                onChange={handleToggle}
+                checked={persist}
+              />
+              Trust This Device
+            </label>
           </form>
         </main>
 
