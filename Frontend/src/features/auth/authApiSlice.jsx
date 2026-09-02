@@ -19,7 +19,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
         try {
           await queryFulfilled
           dispatch(logout())
-          setTimeOut(() => {
+          setTimeout(() => {
             dispatch(apiSlice.util.resetApiState())
           }, 1000)
 
@@ -33,6 +33,9 @@ export const authApiSlice = apiSlice.injectEndpoints({
         url: '/auth/refresh',
         method: 'GET',
       }),
+       transformResponse: (response) => {
+        return response; // Returns { token, user }
+      },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import {
-  useUpdateNoteMutation,
-  useDeleteNoteMutation,
-} from "./notesApiSlice";
+import { useUpdateNoteMutation, useDeleteNoteMutation } from "./notesApiSlice";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import useAuth from "../../hooks/useAuth";
 
 function EditNoteForm({ note, users }) {
+  const { isManager, isAdmin } = useAuth();
+
   const [updateNote, { isLoading, isSuccess, isError, error }] =
     useUpdateNoteMutation();
 
@@ -21,7 +21,6 @@ function EditNoteForm({ note, users }) {
   const [title, setTitle] = useState(note.title);
   const [text, setText] = useState(note.text);
 
-  // IMPORTANT: completed, not comleted
   const [completed, setCompleted] = useState(note.completed);
 
   const [userId, setUserId] = useState(note.user);
@@ -52,8 +51,7 @@ function EditNoteForm({ note, users }) {
     setUserId(e.target.value);
   };
 
-  const canSave =
-    [title, text, userId].every(Boolean) && !isLoading;
+  const canSave = [title, text, userId].every(Boolean) && !isLoading;
 
   const onSaveNoteClicked = async (e) => {
     e.preventDefault();
@@ -101,16 +99,39 @@ function EditNoteForm({ note, users }) {
     </option>
   ));
 
-  const errContent =
-    error?.data?.message || delerror?.data?.message || "";
+  const errContent = error?.data?.message || delerror?.data?.message || "";
 
-  const validTitleClass = !title
-    ? "border-red-500"
-    : "border-gray-300";
+  let deleteButton = null;
 
-  const validTextClass = !text
-    ? "border-red-500"
-    : "border-gray-300";
+  if (isManager || isAdmin) {
+    deleteButton = (
+      <button
+        type="button"
+        className="
+        grid
+        h-12
+        w-12
+        place-content-center
+        border-none
+        bg-transparent
+        text-[2.3rem]
+        text-white
+        transition-transform
+        hover:scale-110
+        focus-visible:scale-110
+        focus-visible:outline-none
+      "
+        title="Delete"
+        onClick={onDeleteNoteClicked}
+      >
+        <FontAwesomeIcon icon={faTrashCan} />
+      </button>
+    );
+  }
+
+  const validTitleClass = !title ? "border-red-500" : "border-gray-300";
+
+  const validTextClass = !text ? "border-red-500" : "border-gray-300";
 
   return (
     <main className="w-full px-4 py-5 sm:px-6 md:px-4">
@@ -121,13 +142,8 @@ function EditNoteForm({ note, users }) {
         </p>
       )}
 
-      <form
-        className="w-full max-w-[850px]"
-        onSubmit={onSaveNoteClicked}
-      >
-        {/* ================================================= */}
+      <form className="w-full max-w-[850px]" onSubmit={onSaveNoteClicked}>
         {/* HEADER */}
-        {/* ================================================= */}
 
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-white sm:text-3xl">
@@ -162,33 +178,11 @@ function EditNoteForm({ note, users }) {
             </button>
 
             {/* DELETE */}
-            <button
-              type="button"
-              title="Delete"
-              onClick={onDeleteNoteClicked}
-              className="
-                grid
-                h-12
-                w-12
-                place-content-center
-                border-none
-                bg-transparent
-                text-[2.3rem]
-                text-white
-                transition-transform
-                hover:scale-110
-                focus-visible:scale-110
-                focus-visible:outline-none
-              "
-            >
-              <FontAwesomeIcon icon={faTrashCan} />
-            </button>
+            {deleteButton}
           </div>
         </div>
 
-        {/* ================================================= */}
         {/* TITLE */}
-        {/* ================================================= */}
 
         <label
           className="mb-2 block text-base text-white sm:text-lg"
@@ -220,9 +214,7 @@ function EditNoteForm({ note, users }) {
           onChange={onTitleChanged}
         />
 
-        {/* ================================================= */}
         {/* TEXT */}
-        {/* ================================================= */}
 
         <label
           className="mb-2 block text-base text-white sm:text-lg"
@@ -254,9 +246,7 @@ function EditNoteForm({ note, users }) {
           onChange={onTextChanged}
         />
 
-        {/* ================================================= */}
         {/* BOTTOM INFORMATION */}
-        {/* ================================================= */}
 
         <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {/* LEFT SIDE */}
@@ -268,7 +258,6 @@ function EditNoteForm({ note, users }) {
               htmlFor="note-completed"
             >
               WORK COMPLETE:
-
               <input
                 className="h-5 w-5 cursor-pointer accent-blue-500"
                 id="note-completed"

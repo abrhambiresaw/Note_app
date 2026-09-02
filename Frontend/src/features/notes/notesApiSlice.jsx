@@ -73,7 +73,7 @@ export const {
 } = notesApiSlice;
 
 // returns the query result object
-export const selectNotesResult = notesApiSlice.endpoints.getNotes.select();
+export const selectNotesResult = notesApiSlice.endpoints.getNotes.select("notesList");
 
 // creates memoized selector
 const selectNotesData = createSelector(

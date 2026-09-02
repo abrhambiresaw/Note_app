@@ -1,5 +1,5 @@
 import { Outlet, Link } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useRefreshMutation } from "./authApiSlice";
 import usePersist from "../../hooks/usePersist";
 import { useSelector } from "react-redux";
@@ -8,62 +8,48 @@ import { selectCurrentToken } from "./authSlice";
 function PersistLogin() {
   const [persist] = usePersist();
   const token = useSelector(selectCurrentToken);
-  const effectRan = useRef(false);
 
-  const [trueSuccess, setTrueSuccess] = useState(false);
-
-  const [refresh, { isUninitialized, isLoading, isSuccess, isError, error }] =
+  const [refresh, { isLoading, isSuccess, isError, error }] =
     useRefreshMutation();
 
   useEffect(() => {
-    if (effectRan.current === true || process.env.NODE_ENV !== "development") {
+    if (!token && persist) {
       const verifyRefreshToken = async () => {
-        console.log("verifying refresh token");
-        try {
-          await refresh().unwrap();
-          setTrueSuccess(true);
-        } catch (err) {
-          console.error(err);
-        }
-      };
+  try {
+    const { accessToken } = await refresh().unwrap();
 
-      if (!token && persist) {
-        verifyRefreshToken();
-      }
+    dispatch(setCredentials({ accessToken }));
+  } catch (err) {
+    console.error("Refresh token failed:", err);
+  }
+};
+
+      verifyRefreshToken();
     }
+  }, [token, persist, refresh]);
 
-    return () => (effectRan.current = true);
-  }, []);
-  
-  let content;
   if (!persist) {
-    console.log("no persist");
-    content = <Outlet />;
-  } else if (isLoading) {
-    //persist: yes, token: no
-    console.log("loading");
-    content = <p>Loading...</p>;
-  } else if (isError) {
-    //persist: yes, token: no
-    console.log("error");
-    content = (
-      <p className="inline-block bg-white text-red-800 p-1 mb-2">
-        {error.data?.message}
+    return <Outlet />;
+  }
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (isError) {
+    return (
+      <p className="mb-2 inline-block bg-white p-1 text-red-800">
+        {error?.data?.message} -{" "}
         <Link to="/login">Please login again</Link>.
       </p>
     );
-  } else if (isSuccess && trueSuccess) {
-    //persist: yes, token: yes
-    console.log("success");
-    content = <Outlet />;
-  } else if (token && isUninitialized) {
-    //persist: yes, token: yes
-    console.log("token and uninit");
-    console.log(isUninitialized);
-    content = <Outlet />;
   }
 
-  return content;
+  if (isSuccess || token) {
+    return <Outlet />;
+  }
+
+  return <p>Loading...</p>;
 }
 
 export default PersistLogin;

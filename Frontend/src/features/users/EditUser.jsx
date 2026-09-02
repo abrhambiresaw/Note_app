@@ -7,7 +7,7 @@ import { selectUserById } from "./usersApiSlice"
 function EditUser() {
   const { id } = useParams()
 
-  const { isLoading } = useGetUsersQuery();
+  const { isLoading } = useGetUsersQuery("userList");
 
   const user = useSelector(state => selectUserById(state, id))
 

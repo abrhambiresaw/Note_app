@@ -1,8 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 function DashFooter() {
+
+  const { username, status } = useAuth()
+
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -24,8 +28,8 @@ function DashFooter() {
   return (
     <footer className="sticky bottom-0 z-[1] bg-slate-900 border-t p-2 border-white flex justify-start items-center gap-4 text-base">
       {goHomeButton}
-      <p>Current User:</p>
-      <p>Status:</p>
+      <p>Current User: {username}</p>
+      <p>Status: {status}</p>
     </footer>
   );
 }

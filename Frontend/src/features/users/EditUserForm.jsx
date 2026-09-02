@@ -13,9 +13,9 @@ function EditUserForm({ user }) {
     useUpdateUserMutation();
 
   const [
-    deleteUser,
-    { isSuccess: isDelSuccess, isError: isDelError, error: delerror },
-  ] = useDeleteUserMutation();
+  deleteUser,
+  { isError: isDelError, error: delerror },
+] = useDeleteUserMutation();
 
   const navigate = useNavigate();
 
@@ -35,13 +35,13 @@ function EditUserForm({ user }) {
   }, [password]);
 
   useEffect(() => {
-    if (isSuccess || isDelSuccess) {
+    if (isSuccess) {
       setUsername("");
       setPassword("");
       setRoles([]);
       navigate("/dash/users");
     }
-  }, [isSuccess, isDelSuccess, navigate]);
+  }, [isSuccess, navigate]);
 
   const onUsernameChanged = (e) => setUsername(e.target.value);
   const onPasswordChanged = (e) => setPassword(e.target.value);
@@ -66,8 +66,14 @@ function EditUserForm({ user }) {
   };
 
   const onDeleteUserClicked = async () => {
-    await deleteUser({ id: user.id });
-  };
+  try {
+    await deleteUser({ id: user.id }).unwrap();
+
+    navigate("/dash/users");
+  } catch (err) {
+    console.error("Failed to delete user:", err);
+  }
+};
 
   let canSave;
   if (password) {

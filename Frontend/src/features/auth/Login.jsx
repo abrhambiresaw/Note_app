@@ -154,16 +154,7 @@ function Login() {
               Sign In
             </button>
 
-            <label htmlFor="persist" className="flex items-center w-full gap-2">
-              <input 
-                type="checkbox" 
-                className="w-6 h-6"
-                id="persist"
-                onChange={handleToggle}
-                checked={persist}
-              />
-              Trust This Device
-            </label>
+    
           </form>
         </main>
 
