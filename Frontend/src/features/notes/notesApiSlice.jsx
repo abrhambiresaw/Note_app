@@ -11,10 +11,12 @@ const initialState = notesAdapter.getInitialState();
 export const notesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getNotes: builder.query({
-      query: () => "/notes",
-      validateStatus: (response, result) => {
-        return response.status === 200 && !result.isError;
-      },
+      query: () => ({
+        url: "/notes",
+        validateStatus: (response, result) => {
+          return response.status === 200 && !result.isError;
+        },
+      }),
       transformResponse: (responseData) => {
         const loadedNotes = responseData.map((note) => {
           note.id = note._id;
@@ -32,7 +34,7 @@ export const notesApiSlice = apiSlice.injectEndpoints({
       },
     }),
 
-     addNewNote: builder.mutation({
+    addNewNote: builder.mutation({
       query: (initialNoteData) => ({
         url: "/notes",
         method: "POST",
@@ -47,9 +49,7 @@ export const notesApiSlice = apiSlice.injectEndpoints({
         method: "PATCH",
         body: { ...initialNoteData },
       }),
-      invalidatesTags: (result, error, arg) => [
-        { type: "Note", id: arg.id },
-      ],
+      invalidatesTags: (result, error, arg) => [{ type: "Note", id: arg.id }],
     }),
 
     deleteNote: builder.mutation({
@@ -58,14 +58,12 @@ export const notesApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
         body: { id },
       }),
-      invalidatesTags: (result, error, arg) => [
-        { type: "Note", id: arg.id },
-      ],
+      invalidatesTags: (result, error, arg) => [{ type: "Note", id: arg.id }],
     }),
   }),
 });
 
-export const { 
+export const {
   useGetNotesQuery,
   useAddNewNoteMutation,
   useDeleteNoteMutation,
@@ -73,7 +71,8 @@ export const {
 } = notesApiSlice;
 
 // returns the query result object
-export const selectNotesResult = notesApiSlice.endpoints.getNotes.select("notesList");
+export const selectNotesResult =
+  notesApiSlice.endpoints.getNotes.select("notesList");
 
 // creates memoized selector
 const selectNotesData = createSelector(

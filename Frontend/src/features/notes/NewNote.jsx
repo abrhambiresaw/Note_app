@@ -1,10 +1,12 @@
-import { useSelector } from "react-redux";
-import { selectAllUsers, useGetUsersQuery } from "../users/usersApiSlice";
+import { useGetUsersQuery } from "../users/usersApiSlice";
 import NewNoteForm from "./NewNoteForm";
 
 function NewNote() {
-  const users = useSelector(selectAllUsers);
-  const { isLoading, isError, error } = useGetUsersQuery();
+  const { isLoading, isError, error, users } = useGetUsersQuery("usersList", {
+    selectFromResult: ({ data }) => ({
+      users: data?.ids.map((id) => data?.entities[id])
+    }),
+  });
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -14,7 +16,7 @@ function NewNote() {
     return <p>{error?.data?.message || "Failed to load users"}</p>;
   }
 
-  if (!users.length) {
+  if (!users?.length) {
     return <p>No users found</p>;
   }
 

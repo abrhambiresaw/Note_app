@@ -1,15 +1,16 @@
 import { useParams } from "react-router-dom"
-import { useSelector } from "react-redux"
 import EditUserForm from "./EditUserForm"
 import { useGetUsersQuery } from "./usersApiSlice"
-import { selectUserById } from "./usersApiSlice"
 
 function EditUser() {
   const { id } = useParams()
 
-  const { isLoading } = useGetUsersQuery("userList");
+  const { isLoading, user } = useGetUsersQuery("userList", {
+    selectFromResult: ({ data }) => ({
+      user: data?.entities[id]
+    }),
+  })
 
-  const user = useSelector(state => selectUserById(state, id))
 
    if (isLoading) {
     return <p>Loading...</p>;
