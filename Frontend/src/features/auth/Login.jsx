@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+
 import { setCredentials } from "./authSlice";
 import { useLoginMutation } from "./authApiSlice";
 
@@ -14,7 +17,8 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
-  const [persist, setPersist] = usePersist()
+  const [persist, setPersist] = usePersist();
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -66,8 +70,8 @@ function Login() {
   const handlePwdInput = (e) => {
     setPassword(e.target.value);
   };
-  
-  const handleToggle = () => setPersist(prev => !prev)
+
+  const handleToggle = () => setPersist((prev) => !prev);
 
   const errClass = errMsg
     ? "mb-4 rounded-md bg-red-100 p-3 text-sm text-red-700"
@@ -135,15 +139,26 @@ function Login() {
                 Password
               </label>
 
-              <input
-                className="w-full rounded-md border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                type="password"
-                id="password"
-                value={password}
-                onChange={handlePwdInput}
-                autoComplete="current-password"
-                required
-              />
+              <div className="relative">
+                <input
+                  className="w-full rounded-md border border-slate-300 px-4 py-3 pr-12 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={password}
+                  onChange={handlePwdInput}
+                  autoComplete="current-password"
+                  required
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                </button>
+              </div>
             </div>
 
             {/* Submit */}
@@ -153,8 +168,6 @@ function Login() {
             >
               Sign In
             </button>
-
-    
           </form>
         </main>
 
