@@ -3,11 +3,13 @@ import { useEffect } from "react";
 import { useRefreshMutation } from "./authApiSlice";
 import usePersist from "../../hooks/usePersist";
 import { useSelector } from "react-redux";
-import { selectCurrentToken } from "./authSlice";
+import { selectCurrentToken, setCredentials } from "./authSlice";
+import { useDispatch } from "react-redux";
 
 function PersistLogin() {
   const [persist] = usePersist();
   const token = useSelector(selectCurrentToken);
+  const dispatch = useDispatch()
 
   const [refresh, { isLoading, isSuccess, isError, error }] =
     useRefreshMutation();

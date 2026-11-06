@@ -21,7 +21,7 @@ function useAuth() {
     return { username, roles, status, isManager, isAdmin }
   }
 
-  return { usename: '', roles: [], isManager, isAdmin, status}
+  return { username: '', roles: [], isManager, isAdmin, status}
 }
 
 export default useAuth
